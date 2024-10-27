@@ -15,7 +15,7 @@ services:
 
   backend:
     container_name: foodgram-back
-    build: ../backend
+    image: closecodex/foodgram_backend
     env_file: .env
     volumes:
       - media_foodgram:/media/
@@ -23,14 +23,15 @@ services:
 
   frontend:
     container_name: foodgram-front
-    build: ../frontend
+    image: closecodex/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
 
   nginx:
     container_name: foodgram-proxy
-    build: .
-    image: nginx:1.25.4-alpine
+    image: closecodex/foodgram_proxy
+#   build: .
+#   image: nginx:1.25.4-alpine
     ports:
       - "8080:80"
     env_file: .env
