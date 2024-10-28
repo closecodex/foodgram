@@ -1,5 +1,6 @@
-from django.db.models import Exists, OuterRef, Sum
+from django.db.models import Sum
 from django.http import HttpResponse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
@@ -11,8 +12,8 @@ from rest_framework.response import Response
 
 from users.models import User
 from .filters import RecipeFilter
-from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Subscription, Tag)
+from .models import (Ingredient, IngredientInRecipe, Recipe,
+                     Subscription, Tag)
 from .pagination import CustomPagination
 from .permissions import IsAuthor
 from .serializers import (AvatarSerializer, IngredientSerializer,
@@ -237,7 +238,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             else:
                 queryset = queryset.exclude(in_shopping_carts__user=user)
 
-
         is_favorited = self.request.query_params.get('is_favorited')
         if is_favorited is not None and user.is_authenticated:
             if is_favorited == '1':
@@ -322,7 +322,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(
                 {'errors': 'Рецепт уже в избранном'},
                 status=status.HTTP_400_BAD_REQUEST
-        )
+            )
         recipe.favorited_by.create(user=user)
         serializer = RecipeShortSerializer(
             recipe, context={'request': request}

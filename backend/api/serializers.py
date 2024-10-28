@@ -251,7 +251,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
 
     def validate_tags(self, value):
         """Валидация тегов."""
-        
+
         if not value:
             raise serializers.ValidationError(
                 'Необходимо добавить хотя бы один тег.'
