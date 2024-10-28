@@ -402,7 +402,9 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         user = data['user']
         author = data['author']
         if user == author:
-            raise serializers.ValidationError('Нельзя подписаться на самого себя.')
+            raise serializers.ValidationError(
+                'Нельзя подписаться на самого себя.'
+            )
         return data
 
 

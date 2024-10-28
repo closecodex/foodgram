@@ -12,13 +12,13 @@ from rest_framework.response import Response
 
 from users.models import User
 from .filters import RecipeFilter
-from .models import (Ingredient, IngredientInRecipe, Recipe,
-                     Subscription, Tag)
+from .models import (Ingredient, IngredientInRecipe, Recipe, Tag)
 from .pagination import CustomPagination
 from .permissions import IsAuthor
 from .serializers import (AvatarSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeShortSerializer,
-                          RecipeWriteSerializer, SetPasswordSerializer, SubscriptionCreateSerializer, SubscriptionSerializer,
+                          RecipeWriteSerializer, SetPasswordSerializer,
+                          SubscriptionCreateSerializer, SubscriptionSerializer,
                           TagSerializer, UserCreateSerializer, UserSerializer)
 
 
@@ -144,7 +144,9 @@ class CustomUserViewSet(UserViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        output_serializer = SubscriptionSerializer(author, context={'request': request})
+        output_serializer = SubscriptionSerializer(
+            author, context={'request': request}
+            )
         return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
