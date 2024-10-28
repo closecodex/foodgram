@@ -2,11 +2,11 @@ import base64
 
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
-from requests import Response
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from api.models import (
-    Ingredient, IngredientInRecipe, Recipe, Tag
+    Ingredient, IngredientInRecipe, Recipe, Subscription, Tag
 )
 from users.models import User
 
@@ -386,6 +386,26 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return ''
 
 
+class SubscriptionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ['user', 'author']
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Subscription.objects.all(),
+                fields=['user', 'author'],
+                message='Вы уже подписаны на этого пользователя.'
+            )
+        ]
+
+    def validate(self, data):
+        user = data['user']
+        author = data['author']
+        if user == author:
+            raise serializers.ValidationError('Нельзя подписаться на самого себя.')
+        return data
+
+
 class SimpleRecipeSerializer(serializers.ModelSerializer):
     """Простой сериализатор для рецептов (в подписках и избранном)."""
 
@@ -401,3 +421,14 @@ class SimpleRecipeSerializer(serializers.ModelSerializer):
         if obj.image:
             return request.build_absolute_uri(obj.image.url)
         return ''
+
+
+class SetPasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_current_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('Неверный текущий пароль.')
+        return value

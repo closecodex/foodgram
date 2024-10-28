@@ -18,7 +18,7 @@ from .pagination import CustomPagination
 from .permissions import IsAuthor
 from .serializers import (AvatarSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeShortSerializer,
-                          RecipeWriteSerializer, SubscriptionSerializer,
+                          RecipeWriteSerializer, SetPasswordSerializer, SubscriptionCreateSerializer, SubscriptionSerializer,
                           TagSerializer, UserCreateSerializer, UserSerializer)
 
 
@@ -88,7 +88,7 @@ class CustomUserViewSet(UserViewSet):
                 {'avatar': str(image_url)}, status=status.HTTP_200_OK
             )
 
-        elif request.method == 'DELETE':
+        if request.method == 'DELETE':
             user.avatar.delete(save=True)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -99,15 +99,12 @@ class CustomUserViewSet(UserViewSet):
         Изменяет пароль для текущего пользователя.
         """
 
+        serializer = SetPasswordSerializer(
+            data=request.data, context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
         user = request.user
-        new_password = request.data.get('new_password')
-        current_password = request.data.get('current_password')
-        if not user.check_password(current_password):
-            return Response(
-                {'current_password': ['Wrong password.']},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        user.set_password(new_password)
+        user.set_password(serializer.validated_data['new_password'])
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -119,9 +116,7 @@ class CustomUserViewSet(UserViewSet):
         """
 
         user = request.user
-        subscriptions = Subscription.objects.filter(user=user)
-        authors = [sub.author for sub in subscriptions]
-
+        authors = User.objects.filter(subscribers__user=user)
         page = self.paginate_queryset(authors)
         if page is not None:
             serializer = SubscriptionSerializer(
@@ -144,23 +139,13 @@ class CustomUserViewSet(UserViewSet):
         user = request.user
         author = get_object_or_404(User, id=id)
 
-        if user == author:
-            return Response(
-                {'errors': 'Нельзя подписаться на самого себя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        data = {'user': user.id, 'author': author.id}
+        serializer = SubscriptionCreateSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        if Subscription.objects.filter(user=user, author=author).exists():
-            return Response(
-                {'errors': 'Вы уже подписаны на этого пользователя'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        Subscription.objects.create(user=user, author=author)
-        serializer = SubscriptionSerializer(
-            author, context={'request': request}
-        )
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        output_serializer = SubscriptionSerializer(author, context={'request': request})
+        return Response(output_serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
     def unsubscribe(self, request, id=None):
