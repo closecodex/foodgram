@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import (AllowAny, IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
-from users.models import User
 
+from users.models import User
 from .filters import RecipeFilter
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Subscription, Tag)
@@ -170,9 +170,7 @@ class CustomUserViewSet(UserViewSet):
         user = request.user
         author = get_object_or_404(User, id=id)
 
-        subscription = Subscription.objects.filter(
-            user=user, author=author
-        )
+        subscription = user.subscriptions.filter(author=author)
         if not subscription.exists():
             return Response(
                 {'errors': 'Вы не подписаны на этого пользователя'},
@@ -234,25 +232,18 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'is_in_shopping_cart'
         )
         if is_in_shopping_cart is not None and user.is_authenticated:
-            queryset = queryset.annotate(
-                is_in_shopping_cart=Exists(
-                    ShoppingCart.objects.filter(
-                        user=user, recipe=OuterRef('pk')
-                    )
-                )
-            ).filter(
-                is_in_shopping_cart=(
-                    True if is_in_shopping_cart == '1' else False
-                )
-            )
+            if is_in_shopping_cart == '1':
+                queryset = queryset.filter(in_shopping_carts__user=user)
+            else:
+                queryset = queryset.exclude(in_shopping_carts__user=user)
+
 
         is_favorited = self.request.query_params.get('is_favorited')
         if is_favorited is not None and user.is_authenticated:
-            queryset = queryset.annotate(
-                is_favorite=Exists(
-                    Favorite.objects.filter(user=user, recipe=OuterRef('pk'))
-                )
-            ).filter(is_favorite=True if is_favorited == '1' else False)
+            if is_favorited == '1':
+                queryset = queryset.filter(favorited_by__user=user)
+            else:
+                queryset = queryset.exclude(favorited_by__user=user)
 
         return queryset
 
@@ -290,12 +281,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        if ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.in_shopping_carts.filter(user=user).exists():
             return Response(
                 {'errors': 'Рецепт уже в корзине покупок'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        ShoppingCart.objects.create(user=user, recipe=recipe)
+        recipe.in_shopping_carts.create(user=user)
         serializer = RecipeShortSerializer(
             recipe, context={'request': request}
         )
@@ -309,9 +300,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        shopping_cart_item = ShoppingCart.objects.filter(
-            user=user, recipe=recipe
-        )
+        shopping_cart_item = recipe.in_shopping_carts.filter(user=user)
         if not shopping_cart_item.exists():
             return Response(
                 {'errors': 'Рецепта нет в корзине покупок'},
@@ -329,12 +318,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        if Favorite.objects.filter(user=user, recipe=recipe).exists():
+        if recipe.favorited_by.filter(user=user).exists():
             return Response(
                 {'errors': 'Рецепт уже в избранном'},
                 status=status.HTTP_400_BAD_REQUEST
-            )
-        Favorite.objects.create(user=user, recipe=recipe)
+        )
+        recipe.favorited_by.create(user=user)
         serializer = RecipeShortSerializer(
             recipe, context={'request': request}
         )
@@ -348,7 +337,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        favorite_item = Favorite.objects.filter(user=user, recipe=recipe)
+        favorite_item = recipe.favorited_by.filter(user=user)
         if not favorite_item.exists():
             return Response(
                 {'errors': 'Рецепта нет в избранном'},
@@ -365,9 +354,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
 
         recipe = self.get_object()
-        data = {
-            'short-link': f'http://89.169.173.241:8000/recipes/{recipe.id}/'
-        }
+        url = request.build_absolute_uri(
+            reverse('recipe-detail', args=[recipe.id])
+        )
+        data = {'short-link': url}
         return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'],

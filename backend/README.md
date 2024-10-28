@@ -74,3 +74,4 @@
     docker-compose exec backend python manage.py createsuperuser
 
 ### IP: 89.169.173.241
+### Данные для админки: email: maria.python@yandex.ru; пароль: JlOv3bJ-5z7
