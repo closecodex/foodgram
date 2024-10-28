@@ -1,9 +1,10 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from api.views import TagViewSet, RecipeViewSet, IngredientViewSet
-from .views import CustomUserViewSet
+from api.views import IngredientViewSet, RecipeViewSet, TagViewSet
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+
+from .views import CustomUserViewSet
 
 api_v1 = DefaultRouter()
 api_v1.register(r'users', CustomUserViewSet, basename='users')

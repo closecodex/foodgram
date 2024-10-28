@@ -1,17 +1,16 @@
 import csv
 import os
 
+from api.models import Ingredient
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-
-from api.models import Ingredient
 
 DATA_ROOT = os.path.join(settings.BASE_DIR, 'data')
 
 
 class Command(BaseCommand):
     """Для загрузки ингредиентов"""
-    
+
     def add_arguments(self, parser):
         parser.add_argument('filename', default='ingredients.csv', nargs='?',
                             type=str)
@@ -31,4 +30,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Ингредиенты добавлены'))
 
         except FileNotFoundError:
-            raise CommandError(f'File "{file_path}" does not exist. Please add it to the /data/ directory')
+            raise CommandError(
+                f'File "{file_path}" does not exist.'
+                'Please add it to the /data/ directory'
+            )

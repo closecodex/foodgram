@@ -1,14 +1,13 @@
 from django.contrib import admin
-from .models import (
-    Ingredient, Subscription, Tag, Recipe,
-    IngredientInRecipe, ShoppingCart, Favorite
-)
+
+from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                     ShoppingCart, Subscription, Tag)
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     """Админка для модели ингредиента."""
-    
+
     list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name',)
