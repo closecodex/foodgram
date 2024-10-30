@@ -1,7 +1,6 @@
 import base64
 
 from django.core.files.base import ContentFile
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.response import Response
 
@@ -181,7 +180,6 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         return False
 
 
-
 class IngredientWriteSerializer(serializers.Serializer):
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all()
@@ -193,7 +191,9 @@ class IngredientWriteSerializer(serializers.Serializer):
 
     def validate_amount(self, value):
         if value < MIN_VALUE:
-            raise serializers.ValidationError('Количество должно быть больше 0.')
+            raise serializers.ValidationError(
+                'Количество должно быть больше 0.'
+            )
         return value
 
 
