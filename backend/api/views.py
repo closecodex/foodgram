@@ -346,7 +346,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         relative_url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
         absolute_url = request.build_absolute_uri(relative_url)
         data = {'short-link': absolute_url}
-        return Response(data, status=status.HTTP_200_OK) 
+        return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated],
