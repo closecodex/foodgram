@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from users.models import User
 from .filters import RecipeFilter
-from .models import (Ingredient, IngredientInRecipe, Recipe, Tag)
+from .models import (Ingredient, IngredientInRecipe, Recipe, ShoppingCart, Tag)
 from .pagination import CustomPagination
 from .permissions import IsAuthor
 from .serializers import (AvatarSerializer, IngredientSerializer,
@@ -61,6 +61,7 @@ class CustomUserViewSet(UserViewSet):
             data=request.data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
@@ -269,12 +270,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        if recipe.in_shopping_carts.filter(user=user).exists():
+        if user.shopping_cart.filter(recipe=recipe).exists():
             return Response(
                 {'errors': 'Рецепт уже в корзине покупок'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        recipe.in_shopping_carts.create(user=user)
+        ShoppingCart.objects.create(user=user, recipe=recipe)
         serializer = RecipeShortSerializer(
             recipe, context={'request': request}
         )
@@ -288,7 +289,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         user = request.user
         recipe = self.get_object()
-        shopping_cart_item = recipe.in_shopping_carts.filter(user=user)
+        shopping_cart_item = user.shopping_cart.filter(recipe=recipe)
         if not shopping_cart_item.exists():
             return Response(
                 {'errors': 'Рецепта нет в корзине покупок'},
@@ -342,11 +343,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         """
 
         recipe = self.get_object()
-        url = request.build_absolute_uri(
-            reverse('recipe-detail', args=[recipe.id])
-        )
-        data = {'short-link': url}
-        return Response(data, status=status.HTTP_200_OK)
+        relative_url = reverse('recipes-detail', kwargs={'pk': recipe.pk})
+        absolute_url = request.build_absolute_uri(relative_url)
+        data = {'short-link': absolute_url}
+        return Response(data, status=status.HTTP_200_OK) 
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated],
