@@ -1,45 +1,47 @@
 # Foodgram Project
 
-## Foodgram - это онлайн-сервис для публикации рецептов. Пользователи могут делиться своими рецептами, добавлять рецепты в избранное, формировать список покупок и подписываться на авторов. Проект построен с использованием Django и работает на контейнерах Docker, обеспечивая доступность и масштабируемость.
+## Foodgram is an online platform for publishing and sharing recipes. Users can post their own recipes, add them to favorites, generate shopping lists, and follow other authors. The project is built with Django and runs inside Docker containers for scalability and accessibility.
 
-## Особенности проекта:
+## Key Features:
 
-1. **Сортировка и фильтрация:**
-    Рецепты на всех страницах отсортированы по дате публикации. Поддерживается фильтрация по тегам, в том числе на странице избранного и на странице рецептов одного автора.
+1. **Sorting and Filtering:**
+    Recipes are sorted by publication date across all pages. Tag-based filtering is supported, including on the favorites page and author-specific recipe lists.
 
-2. **Пагинация:** 
-    Пагинация работает на всех страницах, включая фильтрацию по тегам.
+2. **Pagination:** 
+    Pagination works across all recipe views, including filtered results.
 
-3. **Загруженные данные:** 
-    Предварительно загружены тестовые данные, включающие пользователей и рецепты.
+3. **Preloaded Test Data:** 
+    Includes sample users and recipes for testing and demonstration.
 
-4. **Список покупок:**
-    Пользователи могут скачать список покупок в формате .txt, .pdf или другом. Ингредиенты в списке суммируются.
+4. **Shopping List:**
+    Users can download their shopping list in .txt, .pdf, or other formats. Ingredients are summed up by type.
 
-5. **СУБД PostgreSQL:** 
-    Проект работает с базой данных PostgreSQL.
+5. **Database:** 
+    Uses PostgreSQL as the database engine.
 
-6. **Контейнеризация:** 
-    Проект запущен на виртуальном сервере и работает в трех контейнерах: Nginx, PostgreSQL, и Django+Gunicorn. Фронтенд-сборка осуществляется отдельным контейнером.
+6. **Containerized Deployment:** 
+    Runs on a virtual server using three containers: Nginx, PostgreSQL, and Django+Gunicorn. The frontend is built and served from a separate container.
 
-7. **Хранение данных:** 
-    Данные сохраняются в volumes Docker.
+7. **Persistent Storage** 
+    Data is stored using Docker volumes.
 
-8. **Стандарты.**
-    Код проекта соответствует стандартам PEP 8.
+8. **Code Style:**
+    Fully compliant with PEP 8 coding standards.
 
-## Архитектура проекта
+## Project Architecture
 
-### Проект развернут в контейнерах Docker:
+### The application is deployed in Docker containers:
 
-### Nginx — для раздачи статики и проксирования запросов к контейнеру с Gunicorn.
+### Nginx — serves static files and proxies requests to Gunicorn.
 
-### PostgreSQL — база данных для хранения данных приложения.
+### PostgreSQL — stores application data.
 
-### Django + Gunicorn — сервер приложений для запуска проекта.
+### Django + Gunicorn — serves the backend.
+
+### Frontend — built and served from a separate container.
 
 
-## Технологии
+## Technology Stack
 
 1. **Django**
 
@@ -55,25 +57,23 @@
 
 7. **Djoser для аутентификации пользователей**
 
-## Запуск проекта
+## How to Run the Project
 
-1. **Клонируйте репозиторий:**
+1. **Clone the repository:**
     git clone https://github.com/username/foodgram-project.git
     cd foodgram-project
 
-2. **Создайте файл .env на основе .env.example и заполните необходимыми данными.**
+2. **Create an .env file based on .env.example and fill in the required variables.**
 
-3. **Соберите и запустите контейнеры Docker:**
+3. **Build and run Docker containers:**
     docker-compose up -d --build
 
-4. **Выполните миграции и соберите статику:**
+4. **Run migrations and collect static files:**
     docker-compose exec backend python manage.py migrate
     docker-compose exec backend python manage.py collectstatic --noinput
 
-5. **Создание суперпользователя:**
+5. **Create a superuser:**
     docker-compose exec backend python manage.py createsuperuser
 
-### Ссылка на сайт: http://89.169.173.241/
+### Website URL: http://89.169.173.241/
 ### IP: 89.169.173.241
-### Данные для админки: email: maria.python@yandex.ru; пароль: JlOv3bJ-5z7
-
