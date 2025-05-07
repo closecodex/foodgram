@@ -43,19 +43,19 @@
 
 ## Technology Stack
 
-1. **Django**
+<img src="https://img.shields.io/badge/Python-3670A0?style=for-the-badge&logo=python&logoColor=white"/>
 
-2. **PostgreSQL**
+<img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white"/>
 
-3. **Gunicorn**
+<img src="https://img.shields.io/badge/Gunicorn-2496ED?style=for-the-badge&logo=gunicorn&logoColor=white"/>
 
-4. **Nginx**
+<img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"/>
 
-5. **Docker**
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
 
-6. **Django Rest Framework**
+<img src="https://img.shields.io/badge/Djoser-2496ED?style=for-the-badge&logo=djoser&logoColor=white"/>
 
-7. **Djoser для аутентификации пользователей**
+<img src="https://img.shields.io/badge/Django%20REST%20Framework-00796D?style=for-the-badge&logo=django&logoColor=white"/>
 
 ## How to Run the Project
 
