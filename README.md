@@ -61,7 +61,7 @@
 
 1. **Clone the repository:**
     git clone https://github.com/username/foodgram.git
-    cd foodgram-project
+    cd foodgram
 
 2. **Create an .env file based on .env.example and fill in the required variables.**
 
