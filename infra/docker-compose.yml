@@ -29,7 +29,6 @@ services:
 
   nginx:
     container_name: foodgram-proxy
-    build: .
     image: nginx:1.25.4-alpine
     ports:
       - "8080:80"
