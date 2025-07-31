@@ -2,6 +2,13 @@
 
 ## Foodgram is an online platform for publishing and sharing recipes. Users can post their own recipes, add them to favorites, generate shopping lists, and follow other authors. The project is built with Django and runs inside Docker containers for scalability and accessibility.
 
+<img width="1280" height="715" alt="image" src="https://github.com/user-attachments/assets/b2c409c4-1a2d-4e78-a035-e46844c59e15" />
+<img width="1280" height="792" alt="image" src="https://github.com/user-attachments/assets/1c638132-e24a-49af-bf78-23771781cd4d" />
+<img width="1280" height="702" alt="image" src="https://github.com/user-attachments/assets/796c570d-5c0f-44f3-ab45-19f68661e017" />
+<img width="1280" height="696" alt="image" src="https://github.com/user-attachments/assets/652e3716-9b82-4829-9e72-54e4472fad3c" />
+<img width="1280" height="677" alt="image" src="https://github.com/user-attachments/assets/22060f95-3211-4ad2-b37f-8d0a1033b3d4" />
+<img width="1181" height="932" alt="image" src="https://github.com/user-attachments/assets/acc79c64-2697-48db-aecb-f2566aa0a0de" />
+
 ## Key Features:
 
 1. **Sorting and Filtering:**
@@ -60,20 +67,28 @@
 ## How to Run the Project
 
 1. **Clone the repository:**
+    ```bash
     git clone https://github.com/username/foodgram.git
     cd foodgram
+    ```
 
-2. **Create an .env file based on .env.example and fill in the required variables.**
+3. **Create an .env file based on .env.example and fill in the required variables.**
 
-3. **Build and run Docker containers:**
+4. **Build and run Docker containers:**
+    ```bash
     docker-compose up -d --build
-
-4. **Run migrations and collect static files:**
+    ```
+    
+6. **Run migrations and collect static files:**
+    ```bash
     docker-compose exec backend python manage.py migrate
     docker-compose exec backend python manage.py collectstatic --noinput
-
-5. **Create a superuser:**
+    ```
+    
+8. **Create a superuser:**
+    ```bash
     docker-compose exec backend python manage.py createsuperuser
+    ```
 
 ### Website URL: http://89.169.173.241/
 ### IP: 89.169.173.241
