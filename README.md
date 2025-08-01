@@ -67,7 +67,7 @@
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/username/foodgram.git
+    git clone https://github.com/closecodex/foodgram.git
     cd foodgram
     ```
 
